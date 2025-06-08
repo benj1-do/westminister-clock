@@ -12,10 +12,10 @@ module top_module(
     assign ssmm_switch = (ss[7:4] == 5) & (ss[3:0] == 9) & ena;
     assign mmhh_switch = ssmm_switch & (mm[7:4] == 5) & (mm[3:0] == 9);
     assign ampm_switch = mmhh_switch & (hh[7:4] == 1) & (hh[3:0] == 1);
-    assign chime = (mm == 0) & (ss == 0);
     sixty_counter second(clk, ena, reset, ss);
     sixty_counter minute(clk, ssmm_switch, reset, mm);
     twelve_counter hour(clk, mmhh_switch, reset, hh);
+    sound_pulse plse(clk, mmhh_switch, chime);
     assign pm = pm_reg;
     always @(posedge clk) begin
         if (reset) begin
@@ -74,4 +74,24 @@ module twelve_counter (
         end
     end
     
+endmodule
+
+module sound_pulse(
+    input clk,
+    input request, 
+    output reg trigger
+);
+    reg has_triggered;
+    always @(posedge clk) begin
+        if (!has_triggered && request) begin
+            has_triggered <= 1;
+            trigger <= 1;
+        end else begin
+            trigger <= 0;
+        end
+
+        if (!request) begin
+            has_triggered <= 0;
+        end
+    end
 endmodule

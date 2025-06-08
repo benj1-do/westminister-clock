@@ -8,7 +8,7 @@ module tb_top;
   wire pm, chime;
   wire[7:0] hh, mm, ss;
   top_module TOP(.clk(clk), .reset(reset), .ena(ena), .pm(pm), .hh(hh), .mm(mm), .ss(ss), .chime(chime));
-  always #5 clk = ~clk;
+  always #1 clk = ~clk;
   initial begin
     $dumpfile("dump.vcd");
     $dumpvars(1, tb_top);
